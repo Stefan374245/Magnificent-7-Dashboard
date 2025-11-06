@@ -4,8 +4,13 @@
       <div v-for="stock in stocks" :key="stock.symbol" class="stock-card">
         <div class="stock-header">
           <div class="company-icon">
-            <!-- Icon placeholder -->
-            <span class="icon-text">{{ stock.symbol.charAt(0) }}</span>
+            <img
+              v-if="stock.logo"
+              :src="stock.logo"
+              :alt="stock.name"
+              class="company-logo"
+            />
+            <span v-else class="icon-text">{{ stock.symbol.charAt(0) }}</span>
           </div>
           <span class="company-name">{{ stock.name }}</span>
         </div>
@@ -21,12 +26,17 @@
                 <span class="change-value"
                   >{{ stock.change > 0 ? '+' : '' }}{{ stock.change }}</span
                 >
-                <span class="arrow-icon">{{ stock.change > 0 ? '↑' : '↓' }}</span>
+                <IconWrapper
+                  :name="stock.change > 0 ? 'arrow_upward_alt' : 'arrow_upward_alt'"
+                  :width="14"
+                  :height="14"
+                  :class="{ 'arrow-down': stock.change < 0 }"
+                />
               </div>
 
               <div class="percent-change" :class="{ negative: stock.changePercent < 0 }">
                 <span class="percent-value">{{ stock.changePercent }}%</span>
-                <span class="percent-icon">%</span>
+                <IconWrapper name="percent" :width="12" :height="12" />
               </div>
             </div>
           </div>
@@ -36,7 +46,7 @@
       </div>
 
       <button class="scroll-button">
-        <span class="arrow-icon">→</span>
+        <IconWrapper name="icon" :width="16" :height="16" />
       </button>
     </div>
   </div>
@@ -44,6 +54,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import IconWrapper from './icons/IconWrapper.vue'
 
 interface Stock {
   symbol: string
@@ -51,16 +62,75 @@ interface Stock {
   price: string
   change: number
   changePercent: number
+  logo?: string
+}
+
+// Importiere die Logos
+const getLogoUrl = (logoName: string) => {
+  try {
+    return new URL(`../assets/icons/${logoName}.svg`, import.meta.url).href
+  } catch {
+    return undefined
+  }
 }
 
 const stocks = ref<Stock[]>([
-  { symbol: 'AAPL', name: 'Apple', price: '38.52', change: 1.06, changePercent: 2.83 },
-  { symbol: 'META', name: 'Meta', price: '435.57', change: -5.81, changePercent: -1.32 },
-  { symbol: 'MSFT', name: 'Microsoft', price: '409.05', change: 1.7, changePercent: 2.51 },
-  { symbol: 'GOOGL', name: 'Google', price: '29.87', change: 1.7, changePercent: 6.04 },
-  { symbol: 'AMZN', name: 'Amazon', price: '117.89', change: 4.22, changePercent: 2.43 },
-  { symbol: 'TSLA', name: 'Tsla', price: '177.89', change: 4.22, changePercent: 2.43 },
-  { symbol: 'NVDA', name: 'Nvidia', price: '38.52', change: 1.06, changePercent: 2.83 },
+  {
+    symbol: 'AAPL',
+    name: 'Apple',
+    price: '38.52',
+    change: 1.06,
+    changePercent: 2.83,
+    logo: getLogoUrl('logo0'),
+  },
+  {
+    symbol: 'META',
+    name: 'Meta',
+    price: '435.57',
+    change: -5.81,
+    changePercent: -1.32,
+    logo: getLogoUrl('logo1'),
+  },
+  {
+    symbol: 'MSFT',
+    name: 'Microsoft',
+    price: '409.05',
+    change: 1.7,
+    changePercent: 2.51,
+    logo: getLogoUrl('logo2'),
+  },
+  {
+    symbol: 'GOOGL',
+    name: 'Google',
+    price: '29.87',
+    change: 1.7,
+    changePercent: 6.04,
+    logo: getLogoUrl('logo0'),
+  },
+  {
+    symbol: 'AMZN',
+    name: 'Amazon',
+    price: '117.89',
+    change: 4.22,
+    changePercent: 2.43,
+    logo: getLogoUrl('logo1'),
+  },
+  {
+    symbol: 'TSLA',
+    name: 'Tsla',
+    price: '177.89',
+    change: 4.22,
+    changePercent: 2.43,
+    logo: getLogoUrl('logo2'),
+  },
+  {
+    symbol: 'NVDA',
+    name: 'Nvidia',
+    price: '38.52',
+    change: 1.06,
+    changePercent: 2.83,
+    logo: getLogoUrl('logo0'),
+  },
 ])
 </script>
 
@@ -109,6 +179,12 @@ const stocks = ref<Stock[]>([
   justify-content: center;
   background: var(--color-primary);
   border-radius: 4px;
+}
+
+.company-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .icon-text {
@@ -184,19 +260,21 @@ const stocks = ref<Stock[]>([
   color: #c41c1c;
 }
 
-.arrow-icon {
-  font-size: 16px;
-  color: #3ba752;
-}
-
-.price-change.negative .arrow-icon {
-  color: #c41c1c;
+.arrow-down {
   transform: rotate(180deg);
 }
 
-.percent-icon {
-  font-size: 12px;
-  color: #3ba752;
+.price-change :deep(.icon),
+.percent-change :deep(.icon) {
+  filter: brightness(0) saturate(100%) invert(59%) sepia(31%) saturate(1347%) hue-rotate(86deg);
+}
+
+.price-change.negative :deep(.icon) {
+  filter: brightness(0) saturate(100%) invert(23%) sepia(85%) saturate(4051%) hue-rotate(351deg);
+}
+
+.percent-change.negative :deep(.icon) {
+  filter: brightness(0) saturate(100%) invert(23%) sepia(85%) saturate(4051%) hue-rotate(351deg);
 }
 
 .stock-unit {
@@ -224,10 +302,8 @@ const stocks = ref<Stock[]>([
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
 }
 
-.scroll-button .arrow-icon {
-  color: var(--color-background);
-  font-size: 18px;
-  font-weight: bold;
+.scroll-button :deep(.icon) {
+  filter: brightness(0) saturate(100%) invert(4%) sepia(18%) saturate(3907%) hue-rotate(174deg);
 }
 
 /* Responsive */
