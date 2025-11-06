@@ -2,12 +2,14 @@
   <div class="dashboard">
     <header class="dashboard-header">
       <h1 class="dashboard-title">
-        <span class="title-main">Magnificent 7</span>
-        <span class="title-sub">Dashboard</span>
+        <span class="title-main">The Magnificent Seven Companies</span>
       </h1>
     </header>
 
     <main class="dashboard-content">
+      <!-- Stock Ticker Header -->
+      <StockTicker />
+
       <div class="charts-row">
         <ChartCard title="Revenue Last 3 Years" :width="714" :height="352">
           <LineChart />
@@ -19,17 +21,15 @@
       </div>
 
       <div class="charts-row">
-        <ChartCard title="Net Income TTM" :width="714" :height="352">
+        <ChartCard title="Net Income TTM" :width="392" :height="296">
           <BarChart chartType="netIncome" />
         </ChartCard>
 
-        <ChartCard title="Gross Margin in % LQ" :width="494" :height="352">
+        <ChartCard title="Gross Margin in % LQ" :width="293" :height="296">
           <BarChart chartType="grossMargin" />
         </ChartCard>
-      </div>
 
-      <div class="charts-row">
-        <ChartCard title="Revenue Growth in % YoY" :width="1240" :height="300">
+        <ChartCard title="Revenue Growth in % YoY" :width="491" :height="296">
           <BarChart chartType="revenueGrowth" />
         </ChartCard>
       </div>
@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import StockTicker from '@/components/StockTicker.vue'
 import ChartCard from '@/components/ChartCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import PieChart from '@/components/charts/PieChart.vue'
@@ -57,6 +58,7 @@ import BarChart from '@/components/charts/BarChart.vue'
 }
 
 .dashboard-title {
+  display: flex;
   font-family: var(--font-family-primary);
   font-weight: var(--font-weight-bold);
   margin: 0;
@@ -64,8 +66,9 @@ import BarChart from '@/components/charts/BarChart.vue'
 
 .title-main {
   display: block;
-  font-size: clamp(48px, 8vw, 189px);
-  line-height: 1.2;
+  font-size: 32px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
   color: var(--color-text);
 }
 

@@ -26,26 +26,30 @@ src/
 ## 🎨 Komponenten-Details
 
 ### 1. DashboardView.vue
+
 - **Layout**: Flexbox mit Gap (32px)
 - **Responsive**: Stacks vertikal auf kleinen Bildschirmen
 - **Titel**: "Magnificent 7 Dashboard" mit Figma-Typografie
 - **Charts**: 5 Chart-Bereiche in 3 Reihen
 
 ### 2. ChartCard.vue
+
 - **Props**: title, width, height
 - **Styling**: Border-Radius 16px, Padding 32px/20px
 - **Effekte**: Hover-Animation, Box-Shadow
 - **Slot**: Für beliebige Chart-Inhalte
 
 ### 3. LineChart.vue
+
 - **Daten**: 7 Unternehmen über 13 Quartale
-- **Features**: 
+- **Features**:
   - SVG-basiert für scharfe Darstellung
   - Hover-Effekte auf Linien
   - Legende mit Farbcodierung
   - Grid-Linien und Achsen-Labels
 
 ### 4. PieChart.vue
+
 - **Typ**: Donut-Chart
 - **Daten**: Revenue-Breakdown der 7 Unternehmen
 - **Features**:
@@ -55,7 +59,8 @@ src/
   - Center-Label "In Billion USD TTM"
 
 ### 5. BarChart.vue
-- **3 Modi**: 
+
+- **3 Modi**:
   - `netIncome`: Net Income TTM
   - `grossMargin`: Gross Margin in %
   - `revenueGrowth`: Revenue Growth YoY
@@ -92,6 +97,7 @@ var(--border-radius-md)       /* 16px */
 ## 📊 Mock-Daten (mockData.ts)
 
 Bereit für echte API-Integration:
+
 - `companies[]` - Alle 7 Unternehmen mit Daten
 - `revenueData[]` - 13 Quartale Revenue-Daten
 - `stockPrices[]` - Aktuelle Preise & Änderungen
