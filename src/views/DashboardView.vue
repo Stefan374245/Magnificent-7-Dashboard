@@ -43,6 +43,7 @@ import ChartCard from '@/components/ChartCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import PieChart from '@/components/charts/PieChart.vue'
 import BarChart from '@/components/charts/BarChart.vue'
+import IconWrapper from '@/components/icons/IconWrapper.vue'
 </script>
 
 <style scoped>
@@ -83,6 +84,23 @@ import BarChart from '@/components/charts/BarChart.vue'
 .dashboard-content {
   max-width: var(--container-dashboard-width);
   margin: 0 auto;
+}
+
+/* Company logos row */
+.company-logos {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: 714px; /* matches Figma frame width */
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.company-logos :deep(.icon) {
+  background: transparent;
+  border-radius: 8px;
+  padding: 4px;
+  box-sizing: content-box;
 }
 
 .charts-row {

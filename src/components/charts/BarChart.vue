@@ -41,7 +41,7 @@
         </text>
       </g>
 
-      <!-- X-Axis Labels -->
+      <!-- X-Axis Labels + Logos -->
       <g class="x-axis-labels">
         <text
           v-for="(item, index) in chartData"
@@ -53,6 +53,16 @@
         >
           {{ item.name }}
         </text>
+        <!-- Firmenlogo unter jedem Balken -->
+        <image
+          v-for="(item, index) in chartData"
+          :key="item.name + '-logo'"
+          :x="70 + index * barSpacing + barWidth / 2 - 12"
+          y="285"
+          width="24"
+          height="24"
+          :href="logoMap[item.name]"
+        />
       </g>
     </svg>
   </div>
@@ -135,6 +145,16 @@ const barSpacing = computed(() => {
 const svgWidth = computed(() => {
   return 100 + chartData.value.length * barSpacing.value
 })
+
+const logoMap: Record<string, string> = {
+  Amazon: new URL('@/assets/icons/amazon.png', import.meta.url).href,
+  Meta: new URL('@/assets/icons/meta.png', import.meta.url).href,
+  Alphabet: new URL('@/assets/icons/google.png', import.meta.url).href,
+  Microsoft: new URL('@/assets/icons/microsoft.png', import.meta.url).href,
+  Apple: new URL('@/assets/icons/apple.png', import.meta.url).href,
+  Nvidia: new URL('@/assets/icons/nvidia.png', import.meta.url).href,
+  Tesla: new URL('@/assets/icons/tsla.png', import.meta.url).href,
+}
 </script>
 
 <style scoped>

@@ -30,10 +30,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const iconUrl = computed(() => {
   try {
-    return new URL(`../../assets/icons/${props.name}.svg`, import.meta.url).href
-  } catch (e) {
-    console.warn(`Icon not found: ${props.name}`)
-    return ''
+    // Standard: PNG verwenden
+    return new URL(`../../assets/icons/${props.name}.png`, import.meta.url).href
+  } catch {
+    // Optional: Fallback auf SVG
+    try {
+      return new URL(`../../assets/icons/${props.name}.svg`, import.meta.url).href
+    } catch {
+      console.warn(`Icon not found: ${props.name}`)
+      return ''
+    }
   }
 })
 

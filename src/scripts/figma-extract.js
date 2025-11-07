@@ -64,7 +64,7 @@ async function run() {
     // Extrahiere Icons und Bilder
     console.log('\n🔍 Suche nach Icons und Bildern...')
     const imageNodes = extractImageNodes(data.document)
-    
+
     if (imageNodes.length > 0) {
       console.log(`   - ${imageNodes.length} Icons/Bilder gefunden`)
       await downloadImages(imageNodes)
@@ -80,7 +80,7 @@ function extractImageNodes(node, out = [], parentName = '') {
   const name = node.name?.toLowerCase() || ''
   const width = node.absoluteBoundingBox?.width || 0
   const height = node.absoluteBoundingBox?.height || 0
-  
+
   // Suche nach Komponenten die als Icons gelten könnten
   if (node.type === 'COMPONENT' || node.type === 'INSTANCE') {
     // Prüfe ob es ein Icon ist
@@ -101,16 +101,22 @@ function extractImageNodes(node, out = [], parentName = '') {
   }
 
   // Suche nach Vector-Elementen (SVG-Icons)
-  if (node.type === 'VECTOR' || node.type === 'BOOLEAN_OPERATION' || node.type === 'STAR' || node.type === 'ELLIPSE') {
+  if (
+    node.type === 'VECTOR' ||
+    node.type === 'BOOLEAN_OPERATION' ||
+    node.type === 'STAR' ||
+    node.type === 'ELLIPSE'
+  ) {
     // Nimm Vector nur, wenn er klein genug ist (wahrscheinlich ein Icon)
     // und einen sinnvollen Namen hat (nicht nur "Vector")
     const isSmallEnough = width < 150 && height < 150
-    const hasGoodName = name !== 'vector' || parentName.includes('icon') || parentName.includes('logo')
-    
+    const hasGoodName =
+      name !== 'vector' || parentName.includes('icon') || parentName.includes('logo')
+
     if (isSmallEnough && hasGoodName) {
       // Verwende den Parent-Namen wenn der Vector selbst nur "Vector" heißt
       const displayName = name === 'vector' && parentName ? parentName : node.name
-      
+
       out.push({
         id: node.id,
         name: displayName,
@@ -160,16 +166,16 @@ async function downloadImages(imageNodes) {
     // Erstelle Verzeichnisse
     const iconsDir = path.join(__dirname, '../assets/icons')
     const imagesDir = path.join(__dirname, '../assets/images')
-    
+
     if (!fs.existsSync(iconsDir)) fs.mkdirSync(iconsDir, { recursive: true })
     if (!fs.existsSync(imagesDir)) fs.mkdirSync(imagesDir, { recursive: true })
 
     // Hole Bild-URLs von Figma API (max 100 pro Request)
     const nodeIds = imageNodes.map((n) => n.id).join(',')
-    
+
     // Exportiere als SVG für Icons, PNG für Bilder
     const formats = ['svg', 'png']
-    
+
     for (const format of formats) {
       const scale = format === 'png' ? 2 : 1 // 2x für PNG (Retina)
       const imageRes = await fetch(
@@ -208,27 +214,27 @@ async function downloadImages(imageNodes) {
           }
 
           const buffer = await imgRes.buffer()
-          
+
           // Bestimme Zielverzeichnis
           const isIcon =
             node.name.toLowerCase().includes('icon') ||
             node.name.toLowerCase().includes('logo') ||
             (node.width < 100 && node.height < 100)
-          
+
           const targetDir = isIcon ? iconsDir : imagesDir
-          
+
           // Erstelle sauberen Dateinamen
           const cleanName = node.name
             .replace(/[^a-z0-9-_]/gi, '-')
             .replace(/-+/g, '-')
             .toLowerCase()
-          
+
           const filename = `${cleanName}.${format}`
           const filepath = path.join(targetDir, filename)
-          
+
           fs.writeFileSync(filepath, buffer)
           downloadedCount++
-          
+
           // Zeige nur SVGs oder erste paar PNGs an
           if (format === 'svg' || downloadedCount <= 3) {
             console.log(`   ✓ ${filename} (${format.toUpperCase()})`)
@@ -237,11 +243,11 @@ async function downloadImages(imageNodes) {
           console.warn(`Fehler beim Speichern von ${node.name}:`, err.message)
         }
       }
-      
+
       if (downloadedCount > 3 && format === 'png') {
         console.log(`   ✓ ... und ${downloadedCount - 3} weitere ${format.toUpperCase()}-Dateien`)
       }
-      
+
       console.log(`✅ ${downloadedCount} ${format.toUpperCase()}-Dateien heruntergeladen\n`)
     }
   } catch (err) {

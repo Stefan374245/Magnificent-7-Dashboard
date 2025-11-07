@@ -4,12 +4,7 @@
       <div v-for="stock in stocks" :key="stock.symbol" class="stock-card">
         <div class="stock-header">
           <div class="company-icon">
-            <img
-              v-if="stock.logo"
-              :src="stock.logo"
-              :alt="stock.name"
-              class="company-logo"
-            />
+            <img v-if="stock.logo" :src="stock.logo" :alt="stock.name" class="company-logo" />
             <span v-else class="icon-text">{{ stock.symbol.charAt(0) }}</span>
           </div>
           <span class="company-name">{{ stock.name }}</span>
@@ -46,7 +41,13 @@
       </div>
 
       <button class="scroll-button">
-        <IconWrapper name="icon" :width="16" :height="16" />
+        <img
+          src="../assets/icons/scroll-btn.png"
+          alt="Scroll"
+          width="24"
+          height="24"
+          class="scroll-btn-icon"
+        />
       </button>
     </div>
   </div>
@@ -65,13 +66,15 @@ interface Stock {
   logo?: string
 }
 
-// Importiere die Logos
-const getLogoUrl = (logoName: string) => {
-  try {
-    return new URL(`../assets/icons/${logoName}.svg`, import.meta.url).href
-  } catch {
-    return undefined
-  }
+// Firmenlogo-Mapping
+const logoMap: Record<string, string> = {
+  Apple: new URL('../assets/icons/apple.png', import.meta.url).href,
+  Meta: new URL('../assets/icons/meta.png', import.meta.url).href,
+  Microsoft: new URL('../assets/icons/microsoft.png', import.meta.url).href,
+  Google: new URL('../assets/icons/google.png', import.meta.url).href,
+  Amazon: new URL('../assets/icons/amazon.png', import.meta.url).href,
+  Tsla: new URL('../assets/icons/tsla.png', import.meta.url).href,
+  Nvidia: new URL('../assets/icons/nvidia.png', import.meta.url).href,
 }
 
 const stocks = ref<Stock[]>([
@@ -81,7 +84,7 @@ const stocks = ref<Stock[]>([
     price: '38.52',
     change: 1.06,
     changePercent: 2.83,
-    logo: getLogoUrl('logo0'),
+    logo: logoMap['Apple'],
   },
   {
     symbol: 'META',
@@ -89,7 +92,7 @@ const stocks = ref<Stock[]>([
     price: '435.57',
     change: -5.81,
     changePercent: -1.32,
-    logo: getLogoUrl('logo1'),
+    logo: logoMap['Meta'],
   },
   {
     symbol: 'MSFT',
@@ -97,7 +100,7 @@ const stocks = ref<Stock[]>([
     price: '409.05',
     change: 1.7,
     changePercent: 2.51,
-    logo: getLogoUrl('logo2'),
+    logo: logoMap['Microsoft'],
   },
   {
     symbol: 'GOOGL',
@@ -105,7 +108,7 @@ const stocks = ref<Stock[]>([
     price: '29.87',
     change: 1.7,
     changePercent: 6.04,
-    logo: getLogoUrl('logo0'),
+    logo: logoMap['Google'],
   },
   {
     symbol: 'AMZN',
@@ -113,7 +116,7 @@ const stocks = ref<Stock[]>([
     price: '117.89',
     change: 4.22,
     changePercent: 2.43,
-    logo: getLogoUrl('logo1'),
+    logo: logoMap['Amazon'],
   },
   {
     symbol: 'TSLA',
@@ -121,7 +124,7 @@ const stocks = ref<Stock[]>([
     price: '177.89',
     change: 4.22,
     changePercent: 2.43,
-    logo: getLogoUrl('logo2'),
+    logo: logoMap['Tsla'],
   },
   {
     symbol: 'NVDA',
@@ -129,7 +132,7 @@ const stocks = ref<Stock[]>([
     price: '38.52',
     change: 1.06,
     changePercent: 2.83,
-    logo: getLogoUrl('logo0'),
+    logo: logoMap['Nvidia'],
   },
 ])
 </script>
@@ -177,7 +180,7 @@ const stocks = ref<Stock[]>([
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-primary);
+  background: transparent;
   border-radius: 4px;
 }
 
@@ -300,6 +303,13 @@ const stocks = ref<Stock[]>([
   align-items: center;
   justify-content: center;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+}
+
+.scroll-btn-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  background: transparent;
 }
 
 .scroll-button :deep(.icon) {
