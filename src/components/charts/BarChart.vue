@@ -73,6 +73,7 @@ import { ref, computed } from 'vue'
 
 interface Props {
   chartType: 'netIncome' | 'grossMargin' | 'revenueGrowth'
+  sheetData?: string[][]
 }
 
 const props = defineProps<Props>()
@@ -91,7 +92,7 @@ const colors = [
 const getColor = (index: number) => colors[index]
 
 // Data for different chart types
-const dataByType = {
+const defaultDataByType = {
   netIncome: {
     companies: ['Amazon', 'Meta', 'Alphabet', 'Microsoft', 'Apple', 'Nvidia', 'Tesla'],
     values: [3.16, 6.81, 24.51, 26.25, 39.5, 40.15, 62.62],
@@ -115,6 +116,38 @@ const dataByType = {
   },
 }
 
+function extractDataByType(sheetData?: string[][]) {
+  // You must adapt this mapping to your sheet structure!
+  // Example: sheetData[0] = header, sheetData[1..n] = rows
+  if (!sheetData || sheetData.length === 0) return defaultDataByType
+  // Example: columns: [Company, netIncome, grossMargin, revenueGrowth]
+  const companies = sheetData.slice(1).map(row => row[0] ?? '')
+  return {
+    netIncome: {
+      companies,
+  values: sheetData.slice(1).map(row => parseFloat(row[1] ?? '0')),
+      maxValue: 100,
+      yAxisLabels: ['0', '20', '40', '80', '100'],
+      unit: '',
+    },
+    grossMargin: {
+      companies,
+  values: sheetData.slice(1).map(row => parseFloat(row[2] ?? '0')),
+      maxValue: 30,
+      yAxisLabels: ['0', '10', '20', '30', '40'],
+      unit: '%',
+    },
+    revenueGrowth: {
+      companies,
+  values: sheetData.slice(1).map(row => parseFloat(row[3] ?? '0')),
+      maxValue: 150,
+      yAxisLabels: ['0', '10', '30', '50', '70'],
+      unit: '%',
+    },
+  }
+}
+
+const dataByType = extractDataByType(props.sheetData)
 const currentData = computed(() => dataByType[props.chartType])
 
 const chartData = computed(() => {

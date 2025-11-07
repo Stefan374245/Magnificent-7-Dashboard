@@ -42,10 +42,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-
+const props = defineProps<{ sheetData?: string[][] }>()
 const hoveredSegment = ref<number | null>(null)
 
-const companies = ref([
+const defaultCompanies = [
   { name: 'Amazon', value: 9.1, color: 'var(--color-chart-7)' },
   { name: 'Google', value: 11.5, color: 'var(--color-chart-6)' },
   { name: 'Apple', value: 17.7, color: 'var(--color-chart-5)' },
@@ -53,26 +53,29 @@ const companies = ref([
   { name: 'Nvidia', value: 14.7, color: 'var(--color-chart-3)' },
   { name: 'Tesla', value: 5.4, color: 'var(--color-chart-2)' },
   { name: 'Meta', value: 8.7, color: 'var(--color-chart-1)' },
-])
-
-const colors = [
-  'var(--color-chart-7)', // Amazon
-  'var(--color-chart-6)', // Google
-  'var(--color-chart-5)', // Apple
-  'var(--color-chart-4)', // Microsoft
-  'var(--color-chart-3)', // Nvidia
-  'var(--color-chart-2)', // Tesla
-  'var(--color-chart-1)', // Meta
 ]
 
+const colors = [
+  'var(--color-chart-7)', 'var(--color-chart-6)', 'var(--color-chart-5)', 'var(--color-chart-4)', 'var(--color-chart-3)', 'var(--color-chart-2)', 'var(--color-chart-1)'
+]
 const getColor = (index: number) => colors[index]
+
+const companies = computed(() => {
+  if (!props.sheetData || props.sheetData.length === 0) return defaultCompanies
+  // Example: [Company, Value] in sheetData
+  return props.sheetData.slice(1).map((row: (string | undefined)[], idx: number) => ({
+    name: row[0] ?? '',
+    value: parseFloat(row[1] ?? '0'),
+    color: colors[idx % colors.length]
+  }))
+})
 
 // Calculate pie chart segments
 const segments = computed(() => {
-  const total = companies.value.reduce((sum, c) => sum + c.value, 0)
+  const total = companies.value.reduce((sum: number, c: { value: number }) => sum + c.value, 0)
   let currentAngle = -90 // Start at top
 
-  return companies.value.map((company) => {
+  return companies.value.map((company: { name: string; value: number }) => {
     const percentage = company.value / total
     const angle = percentage * 360
     const startAngle = currentAngle

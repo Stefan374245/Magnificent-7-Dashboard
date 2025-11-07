@@ -49,80 +49,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
+const props = defineProps<{ sheetData?: string[][] }>()
 
-const quarters = [
-  'Q2 2021',
-  'Q1 2021',
-  'Q3 2021',
-  'Q4 2021',
-  'Q1 2022',
-  'Q2 2022',
-  'Q3 2022',
-  'Q4 2022',
-  'Q1 2023',
-  'Q2 2023',
-  'Q3 2023',
-  'Q4 2023',
-  'Q1 2024',
+// Default quarters
+const defaultQuarters = [
+  'Q2 2021','Q1 2021','Q3 2021','Q4 2021','Q1 2022','Q2 2022','Q3 2022','Q4 2022','Q1 2023','Q2 2023','Q3 2023','Q4 2023','Q1 2024',
 ]
 
-const companies = ref([
-  {
-    name: 'Meta',
-    value: '8.7',
-    points:
-      '60,180 110,170 160,160 210,150 260,140 310,130 360,120 410,110 460,100 510,95 560,90 610,85 650,80',
-  },
-  {
-    name: 'Tesla',
-    value: '5.4',
-    points:
-      '60,190 110,185 160,180 210,175 260,170 310,165 360,160 410,155 460,150 510,145 560,140 610,135 650,130',
-  },
-  {
-    name: 'Nvidia',
-    value: '14.7',
-    points:
-      '60,185 110,178 160,170 210,160 260,145 310,125 360,100 410,75 460,50 510,40 560,35 610,30 650,25',
-  },
-  {
-    name: 'Microsoft',
-    value: '17',
-    points:
-      '60,150 110,145 160,140 210,135 260,130 310,125 360,120 410,115 460,110 510,105 560,100 610,95 650,90',
-  },
-  {
-    name: 'Apple',
-    value: '17.7',
-    points:
-      '60,140 110,138 160,136 210,134 260,132 310,130 360,128 410,126 460,124 510,122 560,120 610,118 650,115',
-  },
-  {
-    name: 'Google',
-    value: '11.5',
-    points:
-      '60,165 110,162 160,158 210,155 260,152 310,148 360,145 410,142 460,138 510,135 560,132 610,128 650,125',
-  },
-  {
-    name: 'Amazon',
-    value: '9.1',
-    points:
-      '60,175 110,173 160,170 210,168 260,165 310,162 360,160 410,157 460,155 510,152 560,150 610,147 650,145',
-  },
-])
+// Default companies
+const defaultCompanies = [
+  { name: 'Meta', value: '8.7', points: '60,180 110,170 160,160 210,150 260,140 310,130 360,120 410,110 460,100 510,95 560,90 610,85 650,80' },
+  { name: 'Tesla', value: '5.4', points: '60,190 110,185 160,180 210,175 260,170 310,165 360,160 410,155 460,150 510,145 560,140 610,135 650,130' },
+  { name: 'Nvidia', value: '14.7', points: '60,185 110,178 160,170 210,160 260,145 310,125 360,100 410,75 460,50 510,40 560,35 610,30 650,25' },
+  { name: 'Microsoft', value: '17', points: '60,150 110,145 160,140 210,135 260,130 310,125 360,120 410,115 460,110 510,105 560,100 610,95 650,90' },
+  { name: 'Apple', value: '17.7', points: '60,140 110,138 160,136 210,134 260,132 310,130 360,128 410,126 460,124 510,122 560,120 610,118 650,115' },
+  { name: 'Google', value: '11.5', points: '60,165 110,162 160,158 210,155 260,152 310,148 360,145 410,142 460,138 510,135 560,132 610,128 650,125' },
+  { name: 'Amazon', value: '9.1', points: '60,175 110,173 160,170 210,168 260,165 310,162 360,160 410,157 460,155 510,152 560,150 610,147 650,145' },
+]
 
 const colors = [
-  'var(--color-chart-1)', // Meta
-  'var(--color-chart-2)', // Tesla
-  'var(--color-chart-3)', // Nvidia
-  'var(--color-chart-4)', // Microsoft
-  'var(--color-chart-5)', // Apple
-  'var(--color-chart-6)', // Google
-  'var(--color-chart-7)', // Amazon
+  'var(--color-chart-1)', 'var(--color-chart-2)', 'var(--color-chart-3)', 'var(--color-chart-4)', 'var(--color-chart-5)', 'var(--color-chart-6)', 'var(--color-chart-7)'
 ]
-
 const getColor = (index: number) => colors[index]
+
+// Extract data from sheetData if available
+const companies = computed(() => {
+  if (!props.sheetData || props.sheetData.length === 0) return defaultCompanies
+  // Example: sheetData[0] = header, sheetData[1..n] = rows
+  // You must adapt this mapping to your sheet structure!
+  // Here: [Company, Q1, Q2, Q3, ...]
+  return props.sheetData.slice(1).map((row) => ({
+    name: row[0] ?? '',
+    value: row[row.length-1] ?? '',
+    points: row.slice(1).map((v, i) => `${60+i*50},${240-(parseFloat(v ?? '0'))}`).join(' ')
+  }))
+})
+
+const quarters = computed(() => {
+  if (!props.sheetData || props.sheetData.length === 0) return defaultQuarters
+  return props.sheetData[0]?.slice(1) ?? defaultQuarters
+})
 </script>
 
 <style scoped>
